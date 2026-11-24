@@ -1,0 +1,50 @@
+[package]
+name = "atlas-luks"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+license = "MIT OR Apache-2.0"
+description = "Read LUKS1 and LUKS2 encrypted volumes: keyslot unlock with PBKDF2 or Argon2, AES-XTS and AES-CBC sector decryption."
+repository = "https://github.com/05Narwhal/atlas-luks"
+readme = "README.md"
+keywords = ["luks", "encryption", "disk", "linux", "parser"]
+categories = ["filesystem", "parser-implementations"]
+authors = ["Julian A. Loy"]
+
+[features]
+# The packed cryptsetup test images and their editing helpers, for crates that test against this one.
+test-util = ["dep:zstd"]
+
+[dependencies]
+atlas-fs-core = { version = "0.1", path = "X:/Documents/Coding/Projects/Libraries/Rust/atlas-fs-core" }
+# AES block cipher for XTS and CBC.
+aes = { version = "0.9", default-features = false, features = ["zeroize"] }
+# Key derivation: PBKDF2 (with HMAC) and Argon2.
+pbkdf2 = { version = "0.13", default-features = false, features = ["hmac"] }
+hmac = { version = "0.13", default-features = false, features = ["zeroize"] }
+argon2 = { version = "0.6", default-features = false, features = ["alloc", "zeroize"] }
+sha1 = { version = "0.11", default-features = false }
+sha2 = { version = "0.11", default-features = false, features = ["zeroize"] }
+# Secrets are wiped when dropped.
+zeroize = { version = "1", default-features = false, features = ["alloc"] }
+# LUKS2 JSON metadata and its base64 blobs.
+serde_json = "1"
+base64 = "0.22"
+# Unpacks the test images (`test-util` only).
+zstd = { version = "0.14", default-features = false, optional = true }
+
+[dev-dependencies]
+zstd = { version = "0.14", default-features = false }
+
+[lints.rust]
+unsafe_code = "forbid"
+unused_must_use = "deny"
+rust_2018_idioms = { level = "warn", priority = -1 }
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+dbg_macro = "warn"
+todo = "warn"
+print_stdout = "warn"
+print_stderr = "warn"
+undocumented_unsafe_blocks = "deny"
