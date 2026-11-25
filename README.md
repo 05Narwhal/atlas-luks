@@ -1,6 +1,6 @@
 # atlas-luks
 
-<!-- badges -->[![crates.io](https://img.shields.io/crates/v/atlas-luks.svg)](https://crates.io/crates/atlas-luks) [![docs.rs](https://img.shields.io/docsrs/atlas-luks)](https://docs.rs/atlas-luks) [![CI](https://github.com/05Narwhal/atlas-luks/actions/workflows/ci.yml/badge.svg)](https://github.com/05Narwhal/atlas-luks/actions/workflows/ci.yml) ![License](https://img.shields.io/crates/l/atlas-luks.svg)
+[![crates.io](https://img.shields.io/crates/v/atlas-luks.svg)](https://crates.io/crates/atlas-luks) [![docs.rs](https://img.shields.io/docsrs/atlas-luks)](https://docs.rs/atlas-luks) [![CI](https://github.com/05Narwhal/atlas-luks/actions/workflows/ci.yml/badge.svg)](https://github.com/05Narwhal/atlas-luks/actions/workflows/ci.yml) ![License](https://img.shields.io/crates/l/atlas-luks.svg)
 
 Reads LUKS1 and LUKS2 volumes. `luks::open` parses the header, `Luks::unlock_source` finds the volume key from a password (PBKDF2 or Argon2 keyslots, with caps on the work a header may ask for) and returns a `BlockSource` that decrypts the payload sector by sector (AES-XTS, AES-CBC).
 
