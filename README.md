@@ -2,12 +2,50 @@
 
 [![crates.io](https://img.shields.io/crates/v/atlas-luks.svg)](https://crates.io/crates/atlas-luks) [![docs.rs](https://img.shields.io/docsrs/atlas-luks)](https://docs.rs/atlas-luks) [![CI](https://github.com/05Narwhal/atlas-luks/actions/workflows/ci.yml/badge.svg)](https://github.com/05Narwhal/atlas-luks/actions/workflows/ci.yml) ![License](https://img.shields.io/crates/l/atlas-luks.svg)
 
-Reads LUKS1 and LUKS2 volumes. `luks::open` parses the header, `Luks::unlock_source` finds the volume key from a password (PBKDF2 or Argon2 keyslots, with caps on the work a header may ask for) and returns a `BlockSource` that decrypts the payload sector by sector (AES-XTS, AES-CBC).
+**Read LUKS1 and LUKS2 encrypted volumes: unlock with a password and read the decrypted payload as a `BlockSource`.**
 
+LUKS is the standard disk encryption format on Linux. `atlas-luks` parses the header, finds the volume key from a password, and returns a `BlockSource` that decrypts the payload sector by sector as it is read, so the result goes straight to a filesystem reader. Reading only: nothing here writes.
+
+## Features
+
+- **LUKS1 and LUKS2** headers.
+- Keyslot unlock with **PBKDF2 or Argon2**, with caps on the work a header may ask for, so a hostile header cannot demand unbounded time or memory.
+- **AES-XTS and AES-CBC** sector decryption.
 - `luks::mount(source, mounter)` gives one locked volume whose `unlock` decrypts the payload and passes it to a `Mounter` you supply, because this crate reads no filesystem itself.
-- `kdf`, `xts` and `source` are public because `atlas-bitlocker` shares them.
-- Secrets live in `Zeroizing` buffers; no key-holding type derives `Debug`.
-- No `unsafe`. Every length, offset and count read from the disk is checked; damage is an error, not a panic.
+
+## Quick start
+
+```rust,no_run
+use std::path::Path;
+use std::sync::Arc;
+
+use atlas_fs_core::io::block::BlockSource;
+use atlas_fs_core::io::file::FileSource;
+
+let source: Arc<dyn BlockSource> = Arc::new(FileSource::open(Path::new("volume.img"))?);
+let volume = atlas_luks::luks::open(source)?;
+let payload = volume.unlock_source("password")?;
+println!("{} bytes of decrypted payload", payload.len());
+```
+
+## Handling secrets
+
+The password, derived keys, keyslot material and volume key live in `Zeroizing` buffers and are wiped when dropped. Nothing formats or logs one, and no key-holding type derives `Debug`.
+
+## Public modules
+
+`kdf` (PBKDF2, Argon2 and the anti-forensic merge), `xts` (AES-XTS written over the `aes` block cipher) and `source` (`Decrypted`, the decrypting `BlockSource`) are public because `atlas-bitlocker` shares them.
+
+## Safety and robustness
+
+- **No `unsafe`.** The crate is `#![forbid(unsafe_code)]`.
+- **On-disk bytes are hostile.** Every length, offset and count read from a disk is validated before use. Damage is returned as an error, never a panic, an unchecked index or an unbounded loop.
+- **Lints enforce it.** Clippy's `indexing_slicing`, `arithmetic_side_effects`, `unwrap_used`, `expect_used` and `panic` lints are on for the library code.
+- **Read-only.** Nothing in this crate writes to a disk or image.
+
+## Feature flags
+
+- `test-util`: exposes the synthetic test image builders and fuzz seed inputs this crate's own tests use, for tests of crates built on it. It is not part of the stable API.
 
 ## Install
 
@@ -16,7 +54,9 @@ Reads LUKS1 and LUKS2 volumes. `luks::open` parses the header, `Luks::unlock_sou
 atlas-luks = "26.0.1-a"
 ```
 
-Minimum supported Rust version: 1.88.
+Versions follow `26.MAJOR.MINOR-STAGE`: the year, the major and minor version, and a stage letter (`a` alpha, `b` beta, `s` stable). Cargo treats a stage suffix as a pre-release, so name the version exactly as above.
+
+Minimum supported Rust version: 1.88 (edition 2024).
 
 ## Licence
 
