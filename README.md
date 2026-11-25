@@ -13,7 +13,7 @@ Reads LUKS1 and LUKS2 volumes. `luks::open` parses the header, `Luks::unlock_sou
 
 ```toml
 [dependencies]
-atlas-luks = "0.1"
+atlas-luks = "26.0.1-a"
 ```
 
 Minimum supported Rust version: 1.88.
