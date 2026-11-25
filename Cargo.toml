@@ -1,12 +1,12 @@
 [package]
 name = "atlas-luks"
-version = "26.0.1-a"
+version = "26.0.2-a"
 edition = "2024"
 rust-version = "1.88"
 license = "MIT OR Apache-2.0"
 description = "Read LUKS1 and LUKS2 encrypted volumes: keyslot unlock with PBKDF2 or Argon2, AES-XTS and AES-CBC sector decryption."
 repository = "https://github.com/05Narwhal/atlas-luks"
-homepage = "https://julianloy.com"
+documentation = "https://disk-atlas.julianloy.com/docs"
 readme = "README.md"
 keywords = ["luks", "encryption", "disk", "linux", "parser"]
 categories = ["filesystem", "parser-implementations"]
@@ -17,7 +17,7 @@ authors = ["Julian A. Loy"]
 test-util = ["dep:zstd"]
 
 [dependencies]
-atlas-fs-core = { version = "26.0.1-a", path = "../atlas-fs-core" }
+atlas-fs-core = { version = "26.0.2-a", path = "../atlas-fs-core" }
 # AES block cipher for XTS and CBC.
 aes = { version = "0.9", default-features = false, features = ["zeroize"] }
 # Key derivation: PBKDF2 (with HMAC) and Argon2.
