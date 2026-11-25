@@ -6,6 +6,7 @@ rust-version = "1.88"
 license = "MIT OR Apache-2.0"
 description = "Read LUKS1 and LUKS2 encrypted volumes: keyslot unlock with PBKDF2 or Argon2, AES-XTS and AES-CBC sector decryption."
 repository = "https://github.com/05Narwhal/atlas-luks"
+homepage = "https://julianloy.com"
 readme = "README.md"
 keywords = ["luks", "encryption", "disk", "linux", "parser"]
 categories = ["filesystem", "parser-implementations"]
